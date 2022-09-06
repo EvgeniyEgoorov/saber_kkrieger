@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 # processes cmd line arguments
-def get_args():
+def get_args() -> tuple:
     parser = argparse.ArgumentParser(description="Performance measuring")
     parser.add_argument("path", help="path to executable file")
     parser.add_argument(
@@ -42,7 +42,7 @@ def get_args():
     return args.path, args.o
 
 
-def get_config():
+def get_config() -> tuple:
     config = ConfigParser()
     config.read("config.ini")
 
@@ -53,30 +53,31 @@ def get_config():
     return fraps_exe_path, fraps_output, fraps_hotkey
 
 
-def launch_fraps(exec_file):
+def launch_fraps(exec_file: str) -> subprocess.Popen:
     process = subprocess.Popen([exec_file, "-f"])
     sleep(1)
     logging.info("Fraps is launched")
     return process
 
 
-def launch_game(exec_file):
+def launch_game(exec_file: str) -> subprocess.Popen:
     process = subprocess.Popen([exec_file, "-f"])
     sleep(3)
+    # check the background colors to understand when the game will load
     while pyautogui.pixelMatchesColor(300, 200, (0, 0, 0)):
         sleep(0.1)
     logging.info("The game is launched")
     return process
 
 
-def press_key(key, time=0.1):
+def press_key(key: str, time: float=0.1) -> None:
     pyautogui.keyDown(key)
     sleep(time)
     pyautogui.keyUp(key)
     sleep(1)
 
 
-def make_screenshot(output_folder, file_name):
+def make_screenshot(output_folder: str, file_name: str) -> None:
     scr = pyautogui.screenshot()
     path = os.path.join(output_folder, file_name)
     scr.save(path)
@@ -84,7 +85,7 @@ def make_screenshot(output_folder, file_name):
     sleep(0.5)
 
 
-def get_stat(output_folder, fraps_output):
+def get_stat(output_folder: str, fraps_output: str) -> None:
     fraps_files = glob(fraps_output + "\*.csv")
     latest_stat = max(fraps_files, key=os.path.getctime)
 
@@ -104,7 +105,7 @@ def get_stat(output_folder, fraps_output):
     logging.info("FPS stat is written to median_fps.txt")
 
 
-def kill_process(process):
+def kill_process(process) -> None:
     process.kill()
     sleep(1)
     logging.info(f"{os.path.basename(process.args[0])} is killed")
@@ -112,7 +113,7 @@ def kill_process(process):
 
 def run_scenario(
     game_exe_path, output_folder, fraps_exe_path, fraps_output, fraps_hotkey
-):
+) -> None:
     # launch fraps
     process_1 = launch_fraps(fraps_exe_path)
 
