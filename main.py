@@ -70,7 +70,7 @@ def launch_game(exec_file: str) -> subprocess.Popen:
     return process
 
 
-def press_key(key: str, time: float=0.1) -> None:
+def press_key(key: str, time: float = 0.1) -> None:
     pyautogui.keyDown(key)
     sleep(time)
     pyautogui.keyUp(key)
@@ -82,7 +82,7 @@ def make_screenshot(output_folder: str, file_name: str) -> None:
     path = os.path.join(output_folder, file_name)
     scr.save(path)
     logging.info(f"{file_name} was taken")
-    sleep(0.5)
+    sleep(1)
 
 
 def get_stat(output_folder: str, fraps_output: str) -> None:
@@ -105,14 +105,18 @@ def get_stat(output_folder: str, fraps_output: str) -> None:
     logging.info("FPS stat is written to median_fps.txt")
 
 
-def kill_process(process) -> None:
+def kill_process(process: subprocess.Popen) -> None:
     process.kill()
     sleep(1)
     logging.info(f"{os.path.basename(process.args[0])} is killed")
 
 
 def run_scenario(
-    game_exe_path, output_folder, fraps_exe_path, fraps_output, fraps_hotkey
+    game_exe_path: str,
+    output_folder: str,
+    fraps_exe_path: str,
+    fraps_output: str,
+    fraps_hotkey: str,
 ) -> None:
     # launch fraps
     process_1 = launch_fraps(fraps_exe_path)
@@ -126,11 +130,11 @@ def run_scenario(
     # start game
     press_key("enter")
 
-    # start measure fps
-    press_key(fraps_hotkey)
-
     # screenshot
     make_screenshot(output_folder, "start_screenshot.png")
+
+    # start measure fps
+    press_key(fraps_hotkey)
 
     # move the character forward
     press_key("w", 5)
