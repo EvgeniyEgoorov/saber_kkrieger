@@ -1,0 +1,4 @@
+stats_*
+__pycache__/
+.vscode/
+venv/
